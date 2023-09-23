@@ -11,6 +11,7 @@
     "sourceMap": true,
     "outDir": "./build",
     "removeComments": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

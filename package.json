@@ -27,11 +27,16 @@
   },
   "homepage": "https://github.com/ejekanshjain/html-pdf#readme",
   "devDependencies": {
+    "@types/inline-css": "^3.0.1",
     "@types/node": "^20.4.2",
     "@types/prettier": "^2.7.3",
     "prettier": "^3.0.0",
     "rimraf": "^5.0.1",
     "typescript": "^5.1.6"
   },
-  "dependencies": {}
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "inline-css": "^4.0.2",
+    "puppeteer": "^21.3.4"
+  }
 }
