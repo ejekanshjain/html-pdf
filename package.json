@@ -1,0 +1,37 @@
+{
+  "name": "@ejekanshjain/html-pdf",
+  "version": "1.0.0",
+  "description": "Easily convert html to pdf files",
+  "main": "build/index.js",
+  "scripts": {
+    "clean": "rimraf build && rimraf tsconfig.tsbuildinfo",
+    "build": "npm run clean && tsc",
+    "watch": "npm run clean && tsc -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ejekanshjain/html-pdf.git"
+  },
+  "keywords": [
+    "pdf",
+    "html-pdf",
+    "html",
+    "puppeteer",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Ekansh Jain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ejekanshjain/html-pdf/issues"
+  },
+  "homepage": "https://github.com/ejekanshjain/html-pdf#readme",
+  "devDependencies": {
+    "@types/node": "^20.4.2",
+    "@types/prettier": "^2.7.3",
+    "prettier": "^3.0.0",
+    "rimraf": "^5.0.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {}
+}
