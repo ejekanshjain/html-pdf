@@ -1,6 +1,6 @@
 {
   "name": "@ejekanshjain/html-pdf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easily convert html to pdf files",
   "main": "build/index.js",
   "scripts": {
