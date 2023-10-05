@@ -1,5 +1,5 @@
 import { writeFile } from 'fs/promises'
-import { generatePdf } from '.'
+import { generatePdfs } from './index'
 
 const sampleHtml = `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <style media="screen">
@@ -82,17 +82,20 @@ const sampleHtml = `<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3
 </div>`
 
 const main = async () => {
-  const pdf1 = await generatePdf({
-    content: sampleHtml
-  })
+  const pdf = await generatePdfs([
+    { content: sampleHtml },
+    { url: 'https://www.google.com' }
+  ])
 
-  await writeFile('sample1.pdf', pdf1)
-
-  const pdf2 = await generatePdf({
-    url: 'https://www.google.com'
-  })
-
-  await writeFile('sample2.pdf', pdf2)
+  for (let i = 0; i < pdf.length; i++) {
+    const pdf1 = pdf[i]
+    if (pdf1) {
+      await writeFile(`sample${i + 1}.pdf`, pdf1)
+      console.log('pdf saved')
+    } else {
+      console.error('error')
+    }
+  }
 }
 
 main()
