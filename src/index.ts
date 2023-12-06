@@ -1,6 +1,10 @@
 import handlebars from 'handlebars'
 import inlineCss from 'inline-css'
-import puppeteer, { PDFOptions, PuppeteerLaunchOptions } from 'puppeteer'
+import puppeteer, {
+  ConnectOptions,
+  PDFOptions,
+  PuppeteerLaunchOptions
+} from 'puppeteer'
 
 type Data = {
   url?: string
@@ -10,15 +14,18 @@ type Data = {
 export const generatePdf = async (
   data: Data,
   pdfOptions?: PDFOptions,
-  puppeteerOptions?: PuppeteerLaunchOptions
+  puppeteerLaunchOptions?: PuppeteerLaunchOptions,
+  puppeteerConnectOptions?: ConnectOptions
 ) => {
   const browserOptions: PuppeteerLaunchOptions = {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     headless: false,
-    ...puppeteerOptions
+    ...puppeteerLaunchOptions
   }
 
-  const browser = await puppeteer.launch(browserOptions)
+  const browser = puppeteerConnectOptions
+    ? await puppeteer.connect(puppeteerConnectOptions)
+    : await puppeteer.launch(browserOptions)
   const page = await browser.newPage()
 
   try {
