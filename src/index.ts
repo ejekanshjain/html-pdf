@@ -15,7 +15,8 @@ export const generatePdf = async (
   data: Data,
   pdfOptions?: PDFOptions,
   puppeteerLaunchOptions?: PuppeteerLaunchOptions,
-  puppeteerConnectOptions?: ConnectOptions
+  puppeteerConnectOptions?: ConnectOptions,
+  emulateMediaType?: 'screen' | 'print'
 ) => {
   const browserOptions: PuppeteerLaunchOptions = {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -43,6 +44,10 @@ export const generatePdf = async (
       })
     } else {
       throw new Error('You must provide content or url')
+    }
+
+    if (emulateMediaType) {
+      await page.emulateMediaType(emulateMediaType)
     }
 
     const buffer = await page.pdf(pdfOptions)

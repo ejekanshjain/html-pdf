@@ -1,6 +1,6 @@
 {
   "name": "@ejekanshjain/html-pdf",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Easily convert html to pdf files",
   "main": "build/index.js",
   "scripts": {
@@ -28,13 +28,13 @@
   "homepage": "https://github.com/ejekanshjain/html-pdf#readme",
   "devDependencies": {
     "@types/inline-css": "^3.0.3",
-    "@types/node": "^20.10.3",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.3.2"
+    "@types/node": "^20.14.11",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "handlebars": "^4.7.8",
     "inline-css": "^4.0.2",
-    "puppeteer": "^21.5.2"
+    "puppeteer": "^22.13.1"
   }
 }
