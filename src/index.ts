@@ -1,6 +1,7 @@
 import handlebars from 'handlebars'
 import inlineCss from 'inline-css'
 import puppeteer, {
+  Browser,
   ConnectOptions,
   PDFOptions,
   PuppeteerLaunchOptions
@@ -11,6 +12,38 @@ type Data = {
   content?: string
 }
 
+const browserCache = new Map<string, Browser>()
+
+const getCacheKey = (
+  launch?: PuppeteerLaunchOptions,
+  connect?: ConnectOptions
+) => {
+  return `${connect ? 'connect' : 'launch'}:${JSON.stringify({
+    launch,
+    connect
+  })}`
+}
+
+const getBrowserInstance = async (
+  launchOptions?: PuppeteerLaunchOptions,
+  connectOptions?: ConnectOptions
+): Promise<Browser> => {
+  const key = getCacheKey(launchOptions, connectOptions)
+  const cached = browserCache.get(key)
+  if (cached) return cached
+
+  const browser = connectOptions
+    ? await puppeteer.connect(connectOptions)
+    : await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        ...launchOptions
+      })
+
+  browserCache.set(key, browser)
+  return browser
+}
+
 export const generatePdf = async (
   data: Data,
   pdfOptions?: PDFOptions,
@@ -18,15 +51,10 @@ export const generatePdf = async (
   puppeteerConnectOptions?: ConnectOptions,
   emulateMediaType?: 'screen' | 'print'
 ) => {
-  const browserOptions: PuppeteerLaunchOptions = {
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: false,
-    ...puppeteerLaunchOptions
-  }
-
-  const browser = puppeteerConnectOptions
-    ? await puppeteer.connect(puppeteerConnectOptions)
-    : await puppeteer.launch(browserOptions)
+  const browser = await getBrowserInstance(
+    puppeteerLaunchOptions,
+    puppeteerConnectOptions
+  )
   const page = await browser.newPage()
 
   try {
@@ -51,12 +79,12 @@ export const generatePdf = async (
     }
 
     const buffer = await page.pdf(pdfOptions)
-    await browser.close()
 
     return buffer
   } catch (error) {
-    await browser.close()
     throw error
+  } finally {
+    await page.close()
   }
 }
 
