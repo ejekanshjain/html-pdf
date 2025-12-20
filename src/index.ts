@@ -4,7 +4,7 @@ import puppeteer, {
   Browser,
   ConnectOptions,
   PDFOptions,
-  PuppeteerLaunchOptions
+  LaunchOptions
 } from 'puppeteer'
 
 type Data = {
@@ -14,10 +14,7 @@ type Data = {
 
 const browserCache = new Map<string, Browser>()
 
-const getCacheKey = (
-  launch?: PuppeteerLaunchOptions,
-  connect?: ConnectOptions
-) => {
+const getCacheKey = (launch?: LaunchOptions, connect?: ConnectOptions) => {
   return `${connect ? 'connect' : 'launch'}:${JSON.stringify({
     launch,
     connect
@@ -25,7 +22,7 @@ const getCacheKey = (
 }
 
 const getBrowserInstance = async (
-  launchOptions?: PuppeteerLaunchOptions,
+  launchOptions?: LaunchOptions,
   connectOptions?: ConnectOptions
 ): Promise<Browser> => {
   const key = getCacheKey(launchOptions, connectOptions)
@@ -47,7 +44,7 @@ const getBrowserInstance = async (
 export const generatePdf = async (
   data: Data,
   pdfOptions?: PDFOptions,
-  puppeteerLaunchOptions?: PuppeteerLaunchOptions,
+  puppeteerLaunchOptions?: LaunchOptions,
   puppeteerConnectOptions?: ConnectOptions,
   emulateMediaType?: 'screen' | 'print'
 ) => {
@@ -78,7 +75,8 @@ export const generatePdf = async (
       await page.emulateMediaType(emulateMediaType)
     }
 
-    const buffer = await page.pdf(pdfOptions)
+    const uint8Array = await page.pdf(pdfOptions)
+    const buffer = Buffer.from(uint8Array)
 
     return buffer
   } catch (error) {
@@ -91,7 +89,7 @@ export const generatePdf = async (
 export const generatePdfs = async (
   arr: Data[],
   pdfOptions?: PDFOptions,
-  puppeteerOptions?: PuppeteerLaunchOptions
+  puppeteerOptions?: LaunchOptions
 ) => {
   const pdfBuffers: Buffer[] = []
 

@@ -27,14 +27,14 @@
   },
   "homepage": "https://github.com/ejekanshjain/html-pdf#readme",
   "devDependencies": {
-    "@types/inline-css": "^3.0.3",
-    "@types/node": "^20.14.11",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.5.3"
+    "@types/inline-css": "^3.0.4",
+    "@types/node": "^25.0.3",
+    "rimraf": "^6.1.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "handlebars": "^4.7.8",
-    "inline-css": "^4.0.2",
-    "puppeteer": "^22.13.1"
+    "inline-css": "^4.0.3",
+    "puppeteer": "^24.34.0"
   }
 }
