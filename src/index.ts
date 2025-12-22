@@ -6,6 +6,7 @@ import puppeteer, {
   PDFOptions,
   LaunchOptions
 } from 'puppeteer'
+import { withRetry } from './retry'
 
 type Data = {
   url?: string
@@ -48,42 +49,48 @@ export const generatePdf = async (
   puppeteerConnectOptions?: ConnectOptions,
   emulateMediaType?: 'screen' | 'print'
 ) => {
-  const browser = await getBrowserInstance(
-    puppeteerLaunchOptions,
-    puppeteerConnectOptions
-  )
-  const page = await browser.newPage()
-
-  try {
-    if (data.content) {
-      const generatedHtml = await inlineCss(data.content, { url: '/' })
-      const template = handlebars.compile(generatedHtml, { strict: true })
-      const html = template({})
-
-      await page.setContent(html, {
-        waitUntil: 'networkidle0'
-      })
-    } else if (data.url) {
-      await page.goto(data.url, {
-        waitUntil: ['load', 'networkidle0']
-      })
-    } else {
-      throw new Error('You must provide content or url')
+  return withRetry(async ({ attempt }) => {
+    if (attempt > 1) {
+      browserCache.clear()
     }
 
-    if (emulateMediaType) {
-      await page.emulateMediaType(emulateMediaType)
+    const browser = await getBrowserInstance(
+      puppeteerLaunchOptions,
+      puppeteerConnectOptions
+    )
+    const page = await browser.newPage()
+
+    try {
+      if (data.content) {
+        const generatedHtml = await inlineCss(data.content, { url: '/' })
+        const template = handlebars.compile(generatedHtml, { strict: true })
+        const html = template({})
+
+        await page.setContent(html, {
+          waitUntil: 'networkidle0'
+        })
+      } else if (data.url) {
+        await page.goto(data.url, {
+          waitUntil: ['load', 'networkidle0']
+        })
+      } else {
+        throw new Error('You must provide content or url')
+      }
+
+      if (emulateMediaType) {
+        await page.emulateMediaType(emulateMediaType)
+      }
+
+      const uint8Array = await page.pdf(pdfOptions)
+      const buffer = Buffer.from(uint8Array)
+
+      return buffer
+    } catch (error) {
+      throw error
+    } finally {
+      await page.close()
     }
-
-    const uint8Array = await page.pdf(pdfOptions)
-    const buffer = Buffer.from(uint8Array)
-
-    return buffer
-  } catch (error) {
-    throw error
-  } finally {
-    await page.close()
-  }
+  })
 }
 
 export const generatePdfs = async (
